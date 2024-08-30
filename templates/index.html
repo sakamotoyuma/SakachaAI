@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>さかちゃAI質問サイト</title>
+    <script>
+        async function sendMessage() {
+            const userInput = document.getElementById("userInput").value;
+            const conversationHistory = JSON.parse(localStorage.getItem("conversationHistory")) || [];
+
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_input: userInput, conversation_history: conversationHistory })
+            });
+
+            const data = await response.json();
+            document.getElementById("chatHistory").innerHTML += "<p><strong>あなた:</strong> " + userInput + "</p>";
+            document.getElementById("chatHistory").innerHTML += "<p><strong>さかちゃAI:</strong> " + data.response + "</p>";
+            
+            localStorage.setItem("conversationHistory", JSON.stringify(data.conversation_history));
+            document.getElementById("userInput").value = "";
+        }
+    </script>
+</head>
+<body>
+    <h1>さかちゃAIに質問する</h1>
+    <div id="chatHistory" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; height: 300px; overflow-y: scroll;">
+        <!-- チャット履歴がここに表示されます -->
+    </div>
+    <input type="text" id="userInput" placeholder="質問を入力してください" style="width: 80%;" />
+    <button onclick="sendMessage()">送信</button>
+    <div>
+        <h2>質問集</h2>
+        <ul>
+            <li>駐車場はありますか？</li>
+            <li>Wi-Fiはありますか？</li>
+            <li>チェックインとチェックアウトの時間は？</li>
+            <li>バリアフリーですか？</li>
+            <li>ペット同伴はできますか？</li>
+            <li>ルームサービスについて</li>
+            <li>喫煙について</li>
+            <li>キャンセルについて</li>
+            <li>お支払いについて</li>
+        </ul>
+    </div>
+</body>
+</html>
